@@ -186,12 +186,20 @@ local function color_name_parser(line, i)
 end
 
 local b_hash = ("#"):byte()
+local b_hex_1 = ("0"):byte()
+local b_hex_2 = ("x"):byte()
 local function rgb_hex_parser(line, i, minlen, maxlen)
 	if i > 1 and byte_is_alphanumeric(line:byte(i-1)) then
 		return
 	end
-	if line:byte(i) ~= b_hash then
+	if line:byte(i) ~= b_hash and line:byte(i) ~= b_hex_1 then
 		return
+	end
+	if line:byte(i) == b_hex_1 and line:byte(i+1) ~= b_hex_2 then
+		return
+	end
+	if line:byte(i) == b_hex_1 and line:byte(i+1) == b_hex_2 then
+		i = i + 1
 	end
 	local j = i + 1
 	if #line < j + minlen - 1 then return end
